@@ -1,0 +1,71 @@
+body{
+	font: 18px/25px Georgia;
+	margin: 0;
+	background: -webkit-linear-gradient(left, rgba(0,150,0,0.9), rgba(0, 50, 20, 1));
+	background: -moz-linear-gradient(left, rgba(0,150,0,0.9), rgba(0, 50, 20, 1));
+	background: linear-gradient(left, rgba(0,150,0,0.9), rgba(0, 50, 20, 1));
+	color: #000;
+}
+#todo{
+	width: 35%;
+	overflow: hidden;
+	position: relative;
+	margin: 12% auto 0;
+}
+#todo h1{
+	margin: 5px 0 10px;
+	font-size: 25px;
+	text-align: center;
+	color: #dec0de;
+}
+form, fieldset{
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+input{
+	color: #000;
+	height: 45px;
+	font-size: 18px;
+	border: 1px solid #000;
+	border-radius: 8px;
+	padding: 7px;
+	width: 100%;
+	box-sizing: border-box;
+	display: block;
+	outline: none !important;
+}
+
+input::-webkit-input-placeholder{
+	font-style: italic;
+}
+
+#todoList{
+	margin: 15px 0;
+}
+#todoList ul{
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+#todoList ul li{
+	border-radius: 5px;
+	background: #aaa;
+	margin: 3px 0;
+	padding: 5px 5px 5px 35px;
+}
+#todoList ul li.done{
+	text-decoration: line-through;
+}
+#todoList ul li span{
+	font-size: 0.8em;
+	font-style: italic;
+	float: left;
+	padding-right: 10px;
+}
+a.delete{
+	float: right;
+	color: #f00;
+	cursor: pointer;
+	margin-right: 10px;
+}
