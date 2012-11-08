@@ -22,34 +22,53 @@ TaskCollection = Backbone.Collection.extend({
 var Tasks = new TaskCollection;
 
 /* View */
-var Application = Backbone.View.extend({
-	_taskListEl		: $("#todoList"),
-	_inputEl		: $('#fieldTask'),
+var ItemView = Backbone.View.extend({
+	template: _.template($('#item-template').html()),
 
-	el: $("#todo"),
+	el: $("#todoList"),
 	events: {
-		"submit #taskForm"		: "formSubmit",
-		"click a.delete"		: "removeTask"
+		"click a.delete"		: "removeTask",
+		"click li"				: "changeStatus"
 	},
 	initialize: function(){
 		_.bindAll(this, "renderTask");
-		this.render();
 		Tasks.on('add', this.renderTask, this);
-		Tasks.on('remove', this.render, this);
-		//Tasks.bind('all', this.showTaskList, this);
+		Tasks.on('remove', function(elementWichWasRemoved,ModelCollection,SomeObjectWTF){
+			app.render();
+		}, this);
+		Tasks.on('change', function(){
+			console.log('change');
+			app.render();
+		}, this);
 	},
-	render: function(){
-		console.log("render", this);
-		this._taskListEl.empty();
-		this._taskListEl.append("<ul></ul>");
-		if(Tasks.length){
-			var self = this;
-			_.each(Tasks.models, this.renderTask)
-		};
+	render: function(item){
+		var data = item.toJSON();
+		data.cid = item.cid;
+		return this.template(data);
 	},
 	renderTask: function(item){
 		console.log("showTaskList",item);
-		this._taskListEl.find('ul').append('<li data-cid="'+item.cid+'" class="'+(item.attributes.done? "done": "")+'"><span>'+ item.attributes.date.getDate() +'/'+(item.attributes.date.getMonth()+1)+ "/"+item.attributes.date.getFullYear()+'</span>'+item.attributes.title+'<a class="delete">[X]</a></li>');
+		this.$el.find('ul').append(this.render(item));
+	},
+	changeStatus: function(e){
+		var item = Tasks.getByCid( $(e.target).closest('li').data('cid') );
+		console.log('changeStatus', item);
+		item.set('done', !item.get('done'));
+	},
+	removeTask: function(e){
+		e.stopPropagation();
+		var item = Tasks.getByCid( e.target.parentNode.getAttribute('data-cid') );
+		Tasks.remove(item);
+		console.log("removeTask", item, e.target.parentNode.getAttribute('data-cid'), Tasks);
+	}
+});
+
+var InputView = Backbone.View.extend({
+	_inputEl: $('#fieldTask'),
+
+	el: $("#taskForm").parent(),
+	events: {
+		"submit #taskForm": "formSubmit"
 	},
 	formSubmit: function(){
 		if (!this._inputEl.val()) return;
@@ -58,20 +77,34 @@ var Application = Backbone.View.extend({
 		return false;
 	},
 	addTask: function(){
-		var TL = Tasks.add({title: this.getTaskName()});
-		console.log("addTask", TL.models,TL.models[0].attributes);
+		var TC = Tasks.add({title: this.getTaskName()});
+		console.log("addTask", TC.models,TC.models[0].attributes);
 	},
 	getTaskName: function(){
 		return this._inputEl.val();
-	},
-	removeTask: function(e){
-		var item = Tasks.getByCid( e.target.parentNode.getAttribute('data-cid') );
-		Tasks.remove(item);
-		console.log("removeTask", item, e.target.parentNode.getAttribute('data-cid'), Tasks);
 	}
 });
 
-window.onload = function(){
-	console.log('load');
-	var app = new Application;
-}
+var Application = Backbone.View.extend({
+	_view: null,
+	_input: null,
+
+	initialize: function(){
+		//on application initialization - init Input view/control
+		this._input = new InputView();
+		this._view = new ItemView();
+		this.render();
+	},
+	render: function(){
+		console.log("render", this);
+		this._view.$el.empty();
+		this._view.$el.append("<ul></ul>");
+		if(Tasks.length){
+			var self = this;
+			_.each(Tasks.models, this._view.renderTask)
+		};
+	}
+});
+
+console.log('load');
+var app = new Application();

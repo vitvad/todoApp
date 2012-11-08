@@ -25,6 +25,12 @@
 				</ul>
 			</div>
 		</div>
+	<script type="text/template" id="item-template">
+		<li data-cid="<%= cid %>" class="<%=( done? 'done': '') %>">
+			<span><%= date.getDate() +'/'+(date.getMonth()+1)+ "/"+ date.getFullYear() %></span>
+			<%= title %><a class="delete">[X]</a>
+		</li>
+	</script>
 		<script type="text/javascript" src="js/app.js"></script>
 	</body>
 </html>

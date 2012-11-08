@@ -55,6 +55,10 @@ input::-webkit-input-placeholder{
 	padding: 5px 5px 5px 35px;
 }
 #todoList ul li.done{
+	background:#aaa url(../images/checkbox-checked-md.png) no-repeat 5px 3px;
+	background-size: 25px;
+}
+#todoList ul li.done, #todoList ul li.done span{
 	text-decoration: line-through;
 }
 #todoList ul li span{
